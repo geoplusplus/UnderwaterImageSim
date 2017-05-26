@@ -1,7 +1,5 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-#include <opencv2/opencv.hpp>
-#include <QDebug>
 #include <QMessageBox>
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -9,8 +7,13 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    setWindowTitle("Underwater Image Simulator");
+    dialogOpen = false;
+    bDialog = new BlurDialog();
 //    cv::Mat inputImage = cv::imread("/home/peter/Pictures/fox.jpg");
 //    if(!inputImage.empty()) cv::imshow("Display Image", inputImage);
+    QObject::connect(bDialog,SIGNAL(blurButtonAccepted(bool)),this,SLOT(blurAccepted(bool)));
+    QObject::connect(bDialog,SIGNAL(blurButtonApplied(TransformHistory::blur_effect)),this,SLOT(blurApplied(TransformHistory::blur_effect)));
 }
 
 MainWindow::~MainWindow()
@@ -61,16 +64,62 @@ void MainWindow::on_actionQuit_triggered()
     }
 }
 
+bool MainWindow::checkDialogOpenError() {
+    if(preview.isNull()) {
+        QMessageBox message;
+        message.critical(0,"Error","Please load an image set!");
+        return true;
+    }
+    if(dialogOpen) {
+        QMessageBox message;
+        message.critical(0,"Effect Open","Please close additional effect windows!");
+        return true;
+    }
+    return false;
+}
+
 void MainWindow::on_actionBlur_triggered()
 {
+    if(checkDialogOpenError()) {
+        return;
+    }
+    original = preview;
     //Open a window where user selects type of blur and level of blur
+    bDialog->setModal(true);
+    dialogOpen = true;
+    bDialog->exec();
+    dialogOpen = false;
+}
 
+void MainWindow::blurApplied(TransformHistory::blur_effect settings) {
     //Apply button puts the change on the image in the mainwindow
     //(make sure apply doesn't stack, i.e. it only puts transform on the very first image)
+    cv::Mat cvImage = QPixmapToCvMat(original);
+    cv::Mat blurredImage;
+    if(settings.type == "Averaging") {
+        cv::blur(cvImage,blurredImage,cv::Size(settings.kernel,settings.kernel));
+    }
+    else if(settings.type == "Gaussian") {
+        cv::GaussianBlur(cvImage,blurredImage,cv::Size(settings.kernel,settings.kernel),0,0);
+    }
+    else if(settings.type == "Median") {
+        cv::medianBlur(cvImage,blurredImage,settings.kernel);
+    }
+    else {
+        QMessageBox message;
+        message.critical(0,"Blur Type","Not a valid type! Not sure how you managed that...");
+        return;
+    }
 
-    //Accept button appends it to history of transforms
+    preview = cvMatToQPixmap(blurredImage);
+    ui->imageLabel->setPixmap(preview.scaled(this->size(),Qt::KeepAspectRatio));
+}
 
-    //Cancel returns with no changes done
+void MainWindow::blurAccepted(bool result) {
+    if(!result) {
+        preview = original;
+    }
+    ui->imageLabel->setPixmap(preview.scaled(this->size(),Qt::KeepAspectRatio));
 }
 
 void MainWindow::on_actionDistortion_Noise_triggered()
@@ -131,3 +180,10 @@ void MainWindow::on_actionSave_triggered()
     //Opens up file browser and asks for directory to save in
     //Applies transform to each image in the same directory as the preview image (make sure to check extension) and saves with the original name in the new directory
 }
+
+void MainWindow::on_actionHelp_triggered()
+{
+    QMessageBox message;
+    message.information(0,"Help","We all need help sometimes.");
+}
+

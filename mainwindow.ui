@@ -70,6 +70,7 @@
     <addaction name="actionImport"/>
     <addaction name="actionUndo"/>
     <addaction name="actionSave"/>
+    <addaction name="actionHelp"/>
     <addaction name="actionQuit"/>
    </widget>
    <widget class="QMenu" name="menuEffects">
@@ -117,25 +118,40 @@
    <property name="text">
     <string>Blur</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+B</string>
+   </property>
   </action>
   <action name="actionDistortion_Noise">
    <property name="text">
     <string>Distortion/Noise</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+D</string>
    </property>
   </action>
   <action name="actionArtifacts">
    <property name="text">
     <string>Artifacts</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+A</string>
+   </property>
   </action>
   <action name="actionLighting">
    <property name="text">
     <string>Lighting</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+L</string>
+   </property>
   </action>
   <action name="actionResolution">
    <property name="text">
     <string>Resolution</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+R</string>
    </property>
   </action>
   <action name="actionImport">
@@ -160,6 +176,14 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+S</string>
+   </property>
+  </action>
+  <action name="actionHelp">
+   <property name="text">
+    <string>Help</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+H</string>
    </property>
   </action>
  </widget>

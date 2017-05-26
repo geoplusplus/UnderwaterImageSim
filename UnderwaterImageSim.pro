@@ -23,16 +23,19 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 INCLUDEPATH += /usr/local/include/opencv
-LIBS += -L/usr/local/lib -lopencv_core -lopencv_imgcodecs -lopencv_highgui
+LIBS += -L/usr/local/lib -lopencv_core -lopencv_imgcodecs -lopencv_highgui -lopencv_imgproc
 
 SOURCES += \
         main.cpp \
         mainwindow.cpp \
-    transformhistory.cpp
+    transformhistory.cpp \
+    blurdialog.cpp
 
 HEADERS += \
         mainwindow.h \
-    transformhistory.h
+    transformhistory.h \
+    blurdialog.h
 
 FORMS += \
-        mainwindow.ui
+        mainwindow.ui \
+    blurdialog.ui
