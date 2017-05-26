@@ -19,12 +19,22 @@ BlurDialog::~BlurDialog()
 
 void BlurDialog::on_buttonBox_accepted()
 {
-    Q_EMIT blurButtonAccepted(true);
+    TransformHistory::blur_effect settings;
+    settings.type = ui->typeBox->currentText();
+    bool ok = true;
+    settings.kernel = ui->kernelLine->text().toInt(&ok);
+    if(!ok) {
+        QMessageBox message;
+        message.critical(0,"Empty Kernel Size","Please enter a kernel size!");
+        return;
+    }
+    Q_EMIT blurButtonAccepted(true,settings);
 }
 
 void BlurDialog::on_buttonBox_rejected()
 {
-    Q_EMIT blurButtonAccepted(false);
+    TransformHistory::blur_effect settings;
+    Q_EMIT blurButtonAccepted(false,settings);
 }
 
 void BlurDialog::on_apply_clicked()

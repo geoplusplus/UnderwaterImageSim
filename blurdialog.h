@@ -19,7 +19,7 @@ public:
 
 Q_SIGNALS:
 
-    void blurButtonAccepted(bool);
+    void blurButtonAccepted(bool, TransformHistory::blur_effect);
 
     void blurButtonApplied(TransformHistory::blur_effect);
 

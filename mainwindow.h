@@ -27,7 +27,7 @@ public slots:
 
 public Q_SLOTS:
 
-    void blurAccepted(bool);
+    void blurAccepted(bool, TransformHistory::blur_effect);
 
     void blurApplied(TransformHistory::blur_effect);
 
@@ -58,10 +58,13 @@ private:
     QDir *directory;
     QPixmap preview;
     QPixmap original;
+    QPixmap raw;
     BlurDialog *bDialog;
+    TransformHistory *transform;
 
     bool dialogOpen;
     bool checkDialogOpenError();
+    void repaintPreview();
 
     inline cv::Mat QImageToCvMat( const QImage &inImage, bool inCloneImageData = true )
        {
