@@ -1,6 +1,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include <QMessageBox>
+#include <QThread>
 
 //This is built on Ubuntu 14.04 with OpenCV 3.2.0
 
@@ -10,6 +11,7 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
     setWindowTitle("Underwater Image Simulator");
+    ui->progressBar->setValue(0);
     dialogOpen = false;
     bDialog = new BlurDialog();
     transform = new TransformHistory();
@@ -30,6 +32,7 @@ void MainWindow::repaintPreview() {
 
 void MainWindow::on_actionImport_triggered()
 {
+    ui->progressBar->setValue(0);
     //Open file query window to get the directory of image files
     QString path = QFileDialog::getExistingDirectory(this, tr("Open Directory"),
                                                      "/home",
@@ -88,6 +91,7 @@ bool MainWindow::checkDialogOpenError() {
 
 void MainWindow::on_actionBlur_triggered()
 {
+    ui->progressBar->setValue(0);
     if(checkDialogOpenError()) {
         return;
     }
@@ -122,6 +126,7 @@ void MainWindow::blurAccepted(bool result,TransformHistory::blur_effect settings
 
 void MainWindow::on_actionDistortion_Noise_triggered()
 {
+    ui->progressBar->setValue(0);
     //Open a window where user selects type of noise and scale to add
 
     //Apply button puts the change on the image in the mainwindow
@@ -134,6 +139,7 @@ void MainWindow::on_actionDistortion_Noise_triggered()
 
 void MainWindow::on_actionArtifacts_triggered()
 {
+    ui->progressBar->setValue(0);
     //Open a window where user selects type of artifacts to add (probably will have a template that scales to image size?)
 
     //Apply button puts the change on the image in the mainwindow
@@ -146,6 +152,7 @@ void MainWindow::on_actionArtifacts_triggered()
 
 void MainWindow::on_actionLighting_triggered()
 {
+    ui->progressBar->setValue(0);
     //Open a window where user selects level of contrast and brightness
 
     //Apply button puts the change on the image in the mainwindow
@@ -158,6 +165,7 @@ void MainWindow::on_actionLighting_triggered()
 
 void MainWindow::on_actionResolution_triggered()
 {
+    ui->progressBar->setValue(0);
     //Open a window where user selects new resolution
 
     //Apply button puts the change on the image in the mainwindow (stretch the image to fit the label)
@@ -170,6 +178,7 @@ void MainWindow::on_actionResolution_triggered()
 
 void MainWindow::on_actionUndo_triggered()
 {
+    ui->progressBar->setValue(0);
     //Removes latest transformation from list and recalculates preview image
     if(raw.isNull()) {
         return;
@@ -182,6 +191,7 @@ void MainWindow::on_actionUndo_triggered()
 
 void MainWindow::on_actionSave_triggered()
 {
+    ui->progressBar->setValue(0);
     //Opens up file browser and asks for directory to save in
     QString path = QFileDialog::getExistingDirectory(this, tr("Open Directory"),
                                                      "/home",
@@ -191,12 +201,10 @@ void MainWindow::on_actionSave_triggered()
     QStringList filters;
     filters << "*.jpg" << "*.png" << "*.bmp";
     QStringList images = directory->entryList(filters,QDir::Files,QDir::Name);
-    for(int i=0;i<images.size();i++) {
-        cv::Mat temp = cv::imread(directory->absoluteFilePath(images.at(i)).toStdString());
-        cv::Mat edited = transform->recalculateAll(temp);
-        QString savePath = path + '/' + images.at(i);
-        cv::imwrite(savePath.toStdString(),edited);
-    }
+    ui->progressBar->setMaximum(images.size());
+    save = new saveThread(images,directory,transform,path);
+    QObject::connect(save,SIGNAL(updateProgress(int)),ui->progressBar,SLOT(setValue(int)));
+    save->start();
 }
 
 void MainWindow::on_actionHelp_triggered()

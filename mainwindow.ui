@@ -29,7 +29,7 @@
    <property name="styleSheet">
     <string notr="true"/>
    </property>
-   <layout class="QGridLayout" name="gridLayout_2" rowstretch="0">
+   <layout class="QGridLayout" name="gridLayout_2" rowstretch="0,0,0">
     <item row="0" column="0" alignment="Qt::AlignHCenter|Qt::AlignVCenter">
      <widget class="QLabel" name="imageLabel">
       <property name="sizePolicy">
@@ -49,6 +49,13 @@
       </property>
       <property name="alignment">
        <set>Qt::AlignCenter</set>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="0">
+     <widget class="QProgressBar" name="progressBar">
+      <property name="value">
+       <number>24</number>
       </property>
      </widget>
     </item>

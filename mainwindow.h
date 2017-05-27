@@ -7,6 +7,7 @@
 #include <QDebug>
 #include "blurdialog.h"
 #include "transformhistory.h"
+#include "savethread.h"
 #include "opencv2/opencv.hpp"
 
 namespace Ui {
@@ -61,6 +62,7 @@ private:
     QPixmap raw;
     BlurDialog *bDialog;
     TransformHistory *transform;
+    saveThread *save;
 
     bool dialogOpen;
     bool checkDialogOpenError();
