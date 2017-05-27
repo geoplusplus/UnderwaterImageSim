@@ -8,19 +8,30 @@
 
 TransformHistory::TransformHistory()
 {
-    //A data structure to store list of transforms
-
-    //A function to apply all transforms to an image (pass image as parameter)
+    stepsAway=0;
 }
 
 void TransformHistory::updateHistory(_effect settings) {
+    if(this->redoHistory.size()>this->history.size()) {
+        this->redoHistory.remove(this->redoHistory.size()-stepsAway,stepsAway);
+    }
     this->history.append(settings);
+    this->redoHistory.append(settings);
+    stepsAway = 0;
     //qDebug() << boost::get<blur_effect>(this->history.last()).kernel << '\n';
 }
 
 void TransformHistory::undo() {
     if(!this->history.isEmpty()) {
         this->history.remove(this->history.size()-1);
+        stepsAway++;
+    }
+}
+
+void TransformHistory::redo() {
+    if(stepsAway>0) {
+        this->history.append(this->redoHistory.at(this->redoHistory.size()-stepsAway));
+        stepsAway--;
     }
 }
 

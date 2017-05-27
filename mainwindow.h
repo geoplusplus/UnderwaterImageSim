@@ -69,6 +69,8 @@ private slots:
 
     void on_actionHelp_triggered();
 
+    void on_actionRedo_triggered();
+
 private:
     Ui::MainWindow *ui;
     QDir *directory;

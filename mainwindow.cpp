@@ -282,3 +282,15 @@ void MainWindow::on_actionHelp_triggered()
     message.information(0,"Help","We all need help sometimes.");
 }
 
+
+void MainWindow::on_actionRedo_triggered()
+{
+    ui->progressBar->setValue(0);
+    if(raw.isNull()) {
+        return;
+    }
+    transform->redo();
+    cv::Mat recalculatedImage = transform->recalculateAll(QPixmapToCvMat(raw));
+    preview = cvMatToQPixmap(recalculatedImage);
+    repaintPreview();
+}

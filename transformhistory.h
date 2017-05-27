@@ -37,6 +37,8 @@ public:
 
     void undo();
 
+    void redo();
+
     cv::Mat recalculateAll(cv::Mat);
 
     cv::Mat blur(QString, cv::Mat, int);
@@ -47,6 +49,8 @@ public:
 private:
 
     QVector<_effect> history;
+    QVector<_effect> redoHistory;
+    int stepsAway;
 
 };
 
