@@ -74,3 +74,42 @@ cv::Mat TransformHistory::blur(QString type, cv::Mat src, int kernel) {
     }
     return blurredImage;
 }
+
+cv::Mat TransformHistory::distort(QString type, cv::Mat src, double level) {
+    cv::Mat distImage = src.clone();
+    if(type=="Gaussian") {
+        cv::Mat mSrc = src;
+        cv::Mat mSrc_16SC;
+        cv::Mat mGaussian_noise = cv::Mat(mSrc.size(),CV_16SC3);
+        cv::randn(mGaussian_noise,cv::Scalar::all(0.0), cv::Scalar::all(level));
+
+        mSrc.convertTo(mSrc_16SC,CV_16SC3);
+        cv::addWeighted(mSrc_16SC, 1.0, mGaussian_noise, 1.0, 0.0, mSrc_16SC);
+        mSrc_16SC.convertTo(distImage,mSrc.type());
+    }
+    else if(type=="Salt and Pepper") {
+        if(level>1) {
+            QMessageBox message;
+            message.critical(0,"Salt and Pepper level","Please select a level between 0 and 1!");
+            return distImage;
+        }
+        int totalPix = src.rows*src.cols;
+        int pixToChange = level*totalPix;
+        for(int i=0;i<pixToChange;i++) {
+            int targetRow = rand() % src.rows;
+            int targetCol = rand() % src.cols;
+            int value = 0; //Pepper
+            if(i%2==0) {//Salt
+                value = 255;
+            }
+            distImage.at<cv::Vec3b>(targetRow,targetCol)[0] = value;
+            distImage.at<cv::Vec3b>(targetRow,targetCol)[1] = value;
+            distImage.at<cv::Vec3b>(targetRow,targetCol)[2] = value;
+        }
+    }
+    else {
+        QMessageBox message;
+        message.critical(0,"Noise Type","Not a valid type! Not sure how you managed that...");
+    }
+    return distImage;
+}

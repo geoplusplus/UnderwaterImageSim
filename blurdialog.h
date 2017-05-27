@@ -15,7 +15,6 @@ class BlurDialog : public QDialog
 public:
     explicit BlurDialog(QWidget *parent = 0);
     ~BlurDialog();
-    Ui::BlurDialog *ui;
 
 Q_SIGNALS:
 
@@ -32,6 +31,7 @@ private slots:
     void on_apply_clicked();
 
 private:
+    Ui::BlurDialog *ui;
 
 };
 

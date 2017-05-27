@@ -20,7 +20,7 @@ public:
 
     typedef struct distortion_effect{
         QString type;
-        int level;
+        double level;
     } distortion_effect;
 
     void updateHistory(_effect);
@@ -30,6 +30,7 @@ public:
     cv::Mat recalculateAll(cv::Mat);
 
     cv::Mat blur(QString, cv::Mat, int);
+    cv::Mat distort(QString,cv::Mat,double);
 
 private:
 

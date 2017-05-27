@@ -14,11 +14,14 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->progressBar->setValue(0);
     dialogOpen = false;
     bDialog = new BlurDialog();
+    dDialog = new DistDialog();
     transform = new TransformHistory();
     //    cv::Mat inputImage = cv::imread("/home/peter/Pictures/fox.jpg");
     //    if(!inputImage.empty()) cv::imshow("Display Image", inputImage);
     QObject::connect(bDialog,SIGNAL(blurButtonAccepted(bool,TransformHistory::blur_effect)),this,SLOT(blurAccepted(bool,TransformHistory::blur_effect)));
     QObject::connect(bDialog,SIGNAL(blurButtonApplied(TransformHistory::blur_effect)),this,SLOT(blurApplied(TransformHistory::blur_effect)));
+    QObject::connect(dDialog,SIGNAL(distButtonAccepted(bool,TransformHistory::distortion_effect)),this,SLOT(distAccepted(bool,TransformHistory::distortion_effect)));
+    QObject::connect(dDialog,SIGNAL(distButtonApplied(TransformHistory::distortion_effect)),this,SLOT(distApplied(TransformHistory::distortion_effect)));
 }
 
 MainWindow::~MainWindow()
@@ -127,14 +130,34 @@ void MainWindow::blurAccepted(bool result,TransformHistory::blur_effect settings
 void MainWindow::on_actionDistortion_Noise_triggered()
 {
     ui->progressBar->setValue(0);
-    //Open a window where user selects type of noise and scale to add
+    if(checkDialogOpenError()) {
+        return;
+    }
+    original = preview;
+    //Open a window where user selects type of blur and level of blur
+    dDialog->setModal(true);
+    dialogOpen = true;
+    dDialog->exec();
+    dialogOpen = false;
+}
 
-    //Apply button puts the change on the image in the mainwindow
-    //(make sure apply doesn't stack, i.e. it only puts transform on the very first image)
+void MainWindow::distApplied(TransformHistory::distortion_effect settings) {
+    cv::Mat cvImage = QPixmapToCvMat(original);
+    cv::Mat distImage = transform->distort(settings.type,cvImage,settings.level);
 
-    //Accept button appends it to history of transforms
+    preview = cvMatToQPixmap(distImage);
+    repaintPreview();
+}
 
-    //Cancel returns with no changes done
+void MainWindow::distAccepted(bool result, TransformHistory::distortion_effect settings) {
+    if(!result) {
+        preview = original;
+    }
+    else {
+        distApplied(settings);
+        transform->updateHistory(settings);
+    }
+    repaintPreview();
 }
 
 void MainWindow::on_actionArtifacts_triggered()

@@ -30,14 +30,17 @@ SOURCES += \
         mainwindow.cpp \
     transformhistory.cpp \
     blurdialog.cpp \
-    savethread.cpp
+    savethread.cpp \
+    distdialog.cpp
 
 HEADERS += \
         mainwindow.h \
     transformhistory.h \
     blurdialog.h \
-    savethread.h
+    savethread.h \
+    distdialog.h
 
 FORMS += \
         mainwindow.ui \
-    blurdialog.ui
+    blurdialog.ui \
+    distdialog.ui
