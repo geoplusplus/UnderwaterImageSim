@@ -7,6 +7,7 @@
 #include <QDebug>
 #include "blurdialog.h"
 #include "distdialog.h"
+#include "lightdialog.h"
 #include "transformhistory.h"
 #include "savethread.h"
 #include "opencv2/opencv.hpp"
@@ -36,6 +37,10 @@ public Q_SLOTS:
     void distAccepted(bool, TransformHistory::distortion_effect);
 
     void distApplied(TransformHistory::distortion_effect);
+
+    void lightAccepted(bool,TransformHistory::lighting_effect);
+
+    void lightApplied(TransformHistory::lighting_effect);
 
 private slots:
 
@@ -67,6 +72,7 @@ private:
     QPixmap raw;
     BlurDialog *bDialog;
     DistDialog *dDialog;
+    LightDialog *lDialog;
     TransformHistory *transform;
     saveThread *save;
 

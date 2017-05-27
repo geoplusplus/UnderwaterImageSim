@@ -36,7 +36,13 @@ cv::Mat TransformHistory::recalculateAll(cv::Mat image) {
             break;
         }
         case 1: {//distortion
-
+            distortion_effect d = boost::get<distortion_effect>(current);
+            new_image = this->distort(d.type,new_image,d.level);
+            break;
+        }
+        case 2: {//lighting
+            lighting_effect l = boost::get<lighting_effect>(current);
+            new_image = this->light(new_image,l.contrast,l.brightness);
             break;
         }
         default:
@@ -112,4 +118,20 @@ cv::Mat TransformHistory::distort(QString type, cv::Mat src, double level) {
         message.critical(0,"Noise Type","Not a valid type! Not sure how you managed that...");
     }
     return distImage;
+}
+
+cv::Mat TransformHistory::light(cv::Mat src, double contrast, int brightness) {
+    //Derived from http://docs.opencv.org/2.4/doc/tutorials/core/basic_linear_transform/basic_linear_transform.html
+    cv::Mat lightImage = cv::Mat::zeros(src.size(),src.type());
+
+    for( int y = 0; y < src.rows; y++ )
+    { for( int x = 0; x < src.cols; x++ )
+        { for( int c = 0; c < 3; c++ )
+            {
+                lightImage.at<cv::Vec3b>(y,x)[c] =
+                        cv::saturate_cast<uchar>( contrast*( src.at<cv::Vec3b>(y,x)[c] ) + brightness );
+            }
+        }
+    }
+    return lightImage;
 }

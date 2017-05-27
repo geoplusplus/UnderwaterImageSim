@@ -15,6 +15,7 @@ MainWindow::MainWindow(QWidget *parent) :
     dialogOpen = false;
     bDialog = new BlurDialog();
     dDialog = new DistDialog();
+    lDialog = new LightDialog();
     transform = new TransformHistory();
     //    cv::Mat inputImage = cv::imread("/home/peter/Pictures/fox.jpg");
     //    if(!inputImage.empty()) cv::imshow("Display Image", inputImage);
@@ -22,6 +23,8 @@ MainWindow::MainWindow(QWidget *parent) :
     QObject::connect(bDialog,SIGNAL(blurButtonApplied(TransformHistory::blur_effect)),this,SLOT(blurApplied(TransformHistory::blur_effect)));
     QObject::connect(dDialog,SIGNAL(distButtonAccepted(bool,TransformHistory::distortion_effect)),this,SLOT(distAccepted(bool,TransformHistory::distortion_effect)));
     QObject::connect(dDialog,SIGNAL(distButtonApplied(TransformHistory::distortion_effect)),this,SLOT(distApplied(TransformHistory::distortion_effect)));
+    QObject::connect(lDialog,SIGNAL(lightButtonAccepted(bool,TransformHistory::lighting_effect)),this,SLOT(lightAccepted(bool,TransformHistory::lighting_effect)));
+    QObject::connect(lDialog,SIGNAL(lightButtonApplied(TransformHistory::lighting_effect)),this,SLOT(lightApplied(TransformHistory::lighting_effect)));
 }
 
 MainWindow::~MainWindow()
@@ -176,14 +179,34 @@ void MainWindow::on_actionArtifacts_triggered()
 void MainWindow::on_actionLighting_triggered()
 {
     ui->progressBar->setValue(0);
-    //Open a window where user selects level of contrast and brightness
+    if(checkDialogOpenError()) {
+        return;
+    }
+    original = preview;
+    //Open a window where user selects type of blur and level of blur
+    lDialog->setModal(true);
+    dialogOpen = true;
+    lDialog->exec();
+    dialogOpen = false;
+}
 
-    //Apply button puts the change on the image in the mainwindow
-    //(make sure apply doesn't stack, i.e. it only puts transform on the very first image)
+void MainWindow::lightApplied(TransformHistory::lighting_effect settings) {
+    cv::Mat cvImage = QPixmapToCvMat(original);
+    cv::Mat lightImage = transform->light(cvImage,settings.contrast,settings.brightness);
 
-    //Accept button appends it to history of transforms
+    preview = cvMatToQPixmap(lightImage);
+    repaintPreview();
+}
 
-    //Cancel returns with no changes done
+void MainWindow::lightAccepted(bool result, TransformHistory::lighting_effect settings) {
+    if(!result) {
+        preview = original;
+    }
+    else {
+        lightApplied(settings);
+        transform->updateHistory(settings);
+    }
+    repaintPreview();
 }
 
 void MainWindow::on_actionResolution_triggered()
