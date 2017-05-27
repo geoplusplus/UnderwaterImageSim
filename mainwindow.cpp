@@ -183,7 +183,20 @@ void MainWindow::on_actionUndo_triggered()
 void MainWindow::on_actionSave_triggered()
 {
     //Opens up file browser and asks for directory to save in
-    //Applies transform to each image in the same directory as the preview image (make sure to check extension) and saves with the original name in the new directory
+    QString path = QFileDialog::getExistingDirectory(this, tr("Open Directory"),
+                                                     "/home",
+                                                     QFileDialog::ShowDirsOnly
+                                                     | QFileDialog::DontResolveSymlinks);
+    //Applies transform to each image in the same directory as the preview image and saves with the original name in the new directory
+    QStringList filters;
+    filters << "*.jpg" << "*.png" << "*.bmp";
+    QStringList images = directory->entryList(filters,QDir::Files,QDir::Name);
+    for(int i=0;i<images.size();i++) {
+        cv::Mat temp = cv::imread(directory->absoluteFilePath(images.at(i)).toStdString());
+        cv::Mat edited = transform->recalculateAll(temp);
+        QString savePath = path + '/' + images.at(i);
+        cv::imwrite(savePath.toStdString(),edited);
+    }
 }
 
 void MainWindow::on_actionHelp_triggered()
