@@ -6,7 +6,7 @@
 #include <QVector>
 #include "opencv2/opencv.hpp"
 
-#define _effect boost::variant<TransformHistory::blur_effect,TransformHistory::distortion_effect,TransformHistory::lighting_effect>
+#define _effect boost::variant<TransformHistory::blur_effect,TransformHistory::distortion_effect,TransformHistory::lighting_effect,TransformHistory::resolution_effect>
 
 class TransformHistory
 {
@@ -28,6 +28,11 @@ public:
         int brightness;
     } lighting_effect;
 
+    typedef struct resolution_effect{
+        int horizontal;
+        int vertical;
+    } resolution_effect;
+
     void updateHistory(_effect);
 
     void undo();
@@ -37,6 +42,7 @@ public:
     cv::Mat blur(QString, cv::Mat, int);
     cv::Mat distort(QString,cv::Mat,double);
     cv::Mat light(cv::Mat,double,int);
+    cv::Mat resolution(cv::Mat,int,int);
 
 private:
 

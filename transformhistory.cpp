@@ -45,6 +45,11 @@ cv::Mat TransformHistory::recalculateAll(cv::Mat image) {
             new_image = this->light(new_image,l.contrast,l.brightness);
             break;
         }
+        case 3: {//resolution
+            resolution_effect r = boost::get<resolution_effect>(current);
+            new_image = this->resolution(new_image,r.horizontal,r.vertical);
+            break;
+        }
         default:
 
             break;
@@ -134,4 +139,12 @@ cv::Mat TransformHistory::light(cv::Mat src, double contrast, int brightness) {
         }
     }
     return lightImage;
+}
+
+cv::Mat TransformHistory::resolution(cv::Mat src, int horizontal, int vertical) {
+    cv::Mat resolutionImage = cv::Mat::zeros(horizontal,vertical,src.type());
+
+    cv::resize(src,resolutionImage,resolutionImage.size(),0,0,cv::INTER_LANCZOS4);
+
+    return resolutionImage;
 }

@@ -8,6 +8,7 @@
 #include "blurdialog.h"
 #include "distdialog.h"
 #include "lightdialog.h"
+#include "resolutiondialog.h"
 #include "transformhistory.h"
 #include "savethread.h"
 #include "opencv2/opencv.hpp"
@@ -42,6 +43,10 @@ public Q_SLOTS:
 
     void lightApplied(TransformHistory::lighting_effect);
 
+    void resolutionAccepted(bool,TransformHistory::resolution_effect);
+
+    void resolutionApplied(TransformHistory::resolution_effect);
+
 private slots:
 
     void on_actionQuit_triggered();
@@ -73,6 +78,7 @@ private:
     BlurDialog *bDialog;
     DistDialog *dDialog;
     LightDialog *lDialog;
+    ResolutionDialog *rDialog;
     TransformHistory *transform;
     saveThread *save;
 

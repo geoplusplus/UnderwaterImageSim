@@ -32,7 +32,8 @@ SOURCES += \
     blurdialog.cpp \
     savethread.cpp \
     distdialog.cpp \
-    lightdialog.cpp
+    lightdialog.cpp \
+    resolutiondialog.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -40,10 +41,12 @@ HEADERS += \
     blurdialog.h \
     savethread.h \
     distdialog.h \
-    lightdialog.h
+    lightdialog.h \
+    resolutiondialog.h
 
 FORMS += \
         mainwindow.ui \
     blurdialog.ui \
     distdialog.ui \
-    lightdialog.ui
+    lightdialog.ui \
+    resolutiondialog.ui

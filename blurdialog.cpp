@@ -1,6 +1,5 @@
 #include "blurdialog.h"
 #include "ui_blurdialog.h"
-#include "mainwindow.h"
 #include <QMessageBox>
 
 BlurDialog::BlurDialog(QWidget *parent) :

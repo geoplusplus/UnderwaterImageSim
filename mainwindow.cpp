@@ -16,6 +16,7 @@ MainWindow::MainWindow(QWidget *parent) :
     bDialog = new BlurDialog();
     dDialog = new DistDialog();
     lDialog = new LightDialog();
+    rDialog = new ResolutionDialog();
     transform = new TransformHistory();
     //    cv::Mat inputImage = cv::imread("/home/peter/Pictures/fox.jpg");
     //    if(!inputImage.empty()) cv::imshow("Display Image", inputImage);
@@ -25,6 +26,8 @@ MainWindow::MainWindow(QWidget *parent) :
     QObject::connect(dDialog,SIGNAL(distButtonApplied(TransformHistory::distortion_effect)),this,SLOT(distApplied(TransformHistory::distortion_effect)));
     QObject::connect(lDialog,SIGNAL(lightButtonAccepted(bool,TransformHistory::lighting_effect)),this,SLOT(lightAccepted(bool,TransformHistory::lighting_effect)));
     QObject::connect(lDialog,SIGNAL(lightButtonApplied(TransformHistory::lighting_effect)),this,SLOT(lightApplied(TransformHistory::lighting_effect)));
+    QObject::connect(rDialog,SIGNAL(resolutionButtonApplied(TransformHistory::resolution_effect)),this,SLOT(resolutionApplied(TransformHistory::resolution_effect)));
+    QObject::connect(rDialog,SIGNAL(resolutionButtonAccepted(bool,TransformHistory::resolution_effect)),this,SLOT(resolutionAccepted(bool,TransformHistory::resolution_effect)));
 }
 
 MainWindow::~MainWindow()
@@ -212,14 +215,34 @@ void MainWindow::lightAccepted(bool result, TransformHistory::lighting_effect se
 void MainWindow::on_actionResolution_triggered()
 {
     ui->progressBar->setValue(0);
-    //Open a window where user selects new resolution
+    if(checkDialogOpenError()) {
+        return;
+    }
+    original = preview;
+    //Open a window where user selects type of blur and level of blur
+    rDialog->setModal(true);
+    dialogOpen = true;
+    rDialog->exec();
+    dialogOpen = false;
+}
 
-    //Apply button puts the change on the image in the mainwindow (stretch the image to fit the label)
-    //(make sure apply doesn't stack, i.e. it only puts transform on the very first image)
+void MainWindow::resolutionApplied(TransformHistory::resolution_effect settings) {
+    cv::Mat cvImage = QPixmapToCvMat(original);
+    cv::Mat resolutionImage = transform->resolution(cvImage,settings.horizontal,settings.vertical);
 
-    //Accept button appends it to history of transforms
+    preview = cvMatToQPixmap(resolutionImage);
+    repaintPreview();
+}
 
-    //Cancel returns with no changes done
+void MainWindow::resolutionAccepted(bool result, TransformHistory::resolution_effect settings) {
+    if(!result) {
+        preview = original;
+    }
+    else {
+        resolutionApplied(settings);
+        transform->updateHistory(settings);
+    }
+    repaintPreview();
 }
 
 void MainWindow::on_actionUndo_triggered()

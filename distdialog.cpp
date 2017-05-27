@@ -1,6 +1,5 @@
 #include "distdialog.h"
 #include "ui_distdialog.h"
-#include "mainwindow.h"
 #include <QMessageBox>
 
 DistDialog::DistDialog(QWidget *parent) :
