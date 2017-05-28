@@ -7,6 +7,7 @@
 
 //TODO: Add artifact features. Import a template of basic image artifacts and lay it over top the current image.
 //This is not super high priority, as SLAM systems are often adept at filtering out artifacts. The systems are much more susceptible to noise.
+//TODO: Save the effects in some sort of XML file. Makes it easier to export effect chains and load in new ones.
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
