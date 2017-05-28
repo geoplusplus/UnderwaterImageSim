@@ -87,7 +87,6 @@
     </property>
     <addaction name="actionBlur"/>
     <addaction name="actionDistortion_Noise"/>
-    <addaction name="actionArtifacts"/>
     <addaction name="actionLighting"/>
     <addaction name="actionResolution"/>
    </widget>

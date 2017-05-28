@@ -55,8 +55,6 @@ private slots:
 
     void on_actionDistortion_Noise_triggered();
 
-    void on_actionArtifacts_triggered();
-
     void on_actionLighting_triggered();
 
     void on_actionResolution_triggered();

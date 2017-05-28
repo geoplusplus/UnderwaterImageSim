@@ -5,6 +5,9 @@
 
 //This is built on Ubuntu 14.04 with OpenCV 3.2.0
 
+//TODO: Add artifact features. Import a template of basic image artifacts and lay it over top the current image.
+//This is not super high priority, as SLAM systems are often adept at filtering out artifacts. The systems are much more susceptible to noise.
+
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
@@ -164,19 +167,6 @@ void MainWindow::distAccepted(bool result, TransformHistory::distortion_effect s
         transform->updateHistory(settings);
     }
     repaintPreview();
-}
-
-void MainWindow::on_actionArtifacts_triggered()
-{
-    ui->progressBar->setValue(0);
-    //Open a window where user selects type of artifacts to add (probably will have a template that scales to image size?)
-
-    //Apply button puts the change on the image in the mainwindow
-    //(make sure apply doesn't stack, i.e. it only puts transform on the very first image)
-
-    //Accept button appends it to history of transforms
-
-    //Cancel returns with no changes done
 }
 
 void MainWindow::on_actionLighting_triggered()
