@@ -153,7 +153,7 @@ cv::Mat TransformHistory::light(cv::Mat src, double contrast, int brightness) {
 }
 
 cv::Mat TransformHistory::resolution(cv::Mat src, int horizontal, int vertical) {
-    cv::Mat resolutionImage = cv::Mat::zeros(horizontal,vertical,src.type());
+    cv::Mat resolutionImage = cv::Mat::zeros(vertical,horizontal,src.type());
 
     cv::resize(src,resolutionImage,resolutionImage.size(),0,0,cv::INTER_LANCZOS4);
 
